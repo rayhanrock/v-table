@@ -50,55 +50,12 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
   name: 'App',
   data() {
     return {
-      rows: [
-        {
-          id: 1,
-          customer: 'John',
-          products: [
-            { name: 'apple', price: 200 },
-            { name: 'orange', price: 100 },
-            { name: 'banana', price: 50 },
-          ],
-          date: new Date('2020-01-01'),
-        },
-
-        {
-          id: 2,
-          customer: 'Smith',
-          products: [
-            { name: 'dates', price: 50 },
-            { name: 'x', price: 100 },
-            { name: 'y', price: 50 },
-          ],
-          date: new Date('2020-02-01'),
-        },
-        {
-          id: 3,
-          customer: 'david',
-          products: [
-            { name: 'apple', price: 200 },
-            { name: 'orange', price: 100 },
-            { name: 'banana', price: 50 },
-          ],
-          date: new Date('2020-01-01'),
-        },
-
-        {
-          id: 4,
-          customer: 'doe',
-          products: [
-            { name: 'dates', price: 50 },
-            { name: 'x', price: 100 },
-            { name: 'y', price: 50 },
-          ],
-
-          date: new Date('2020-02-01'),
-        },
-      ],
+      rows: [],
       filteredRows: [],
       searchText: '',
       isAscendingDate: true,
@@ -112,8 +69,22 @@ export default {
       };
     },
   },
-  created() {
-    this.filteredRows = this.rows;
+  async created() {
+    try {
+      const res = await axios.get(`http://localhost:3000/rows`);
+      console.log(res);
+
+      this.rows = res.data.map((row) => {
+        return {
+          ...row,
+          date: new Date(row.date),
+        };
+      });
+
+      this.filteredRows = this.rows;
+    } catch (error) {
+      console.log(error);
+    }
   },
 
   methods: {
